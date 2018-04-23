@@ -62,17 +62,16 @@ func doReduce(
 		if err != nil {
 			log.Fatal(err)
 		}
-		defer f.Close()
 		decoder := json.NewDecoder(f)
 
 		for {
 			err = decoder.Decode(&keyValue)
 			if err != nil {
-				fmt.Println("Decoding error", err)
 				break
 			}
 			keyValues = append(keyValues, keyValue)
 		}
+		f.Close()
 	}
 
 	keyValueMap := make(map[string][]string)
@@ -87,18 +86,21 @@ func doReduce(
 	}
 
 	sort.Strings(keys)
-
+	// fmt.Println("Length of keys", len(keys))
+	// fmt.Println("OutFile", outFile)
 	out, err := os.OpenFile(outFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer out.Close()
+
 	encoder := json.NewEncoder(out)
 	for _, k := range keys {
-		err = encoder.Encode(keyValueMap[k])
+		outString := reduceF(k, keyValueMap[k])
+		outJSON := KeyValue{k, outString}
+		err = encoder.Encode(outJSON)
 		if err != nil {
 			log.Fatal(k, "failed for file", outFile, "on reduceTaskNumber", reduceTaskNumber)
 		}
 	}
-
 }
