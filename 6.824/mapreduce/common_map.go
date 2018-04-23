@@ -1,7 +1,6 @@
 package mapreduce
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"hash/fnv"
@@ -63,30 +62,29 @@ func doMap(
 	if err != nil {
 		fmt.Println("Read Error")
 	}
-	n := bytes.IndexByte(contentBytes, 0)
-	fmt.Println(contentBytes, n)
-	contents := string(contentBytes[:n])
+
+	contents := string(contentBytes[:])
 	keyValuePairs := mapF(inFile, contents)
 
-	outputDir := "out/"
 	for _, keyValue := range keyValuePairs {
 		r := ihash(keyValue.Key) % nReduce
-		fileName := reduceName(jobName, mapTaskNumber, r)
-		outputFile := outputDir + fileName
+		outputFile := reduceName(jobName, mapTaskNumber, r)
 
 		f, err := os.OpenFile(outputFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
 			log.Fatal(err)
 		}
-		defer f.Close()
 
-		write, err := json.Marshal(keyValue)
+		encoder := json.NewEncoder(f)
+		err = encoder.Encode(keyValue)
+		// write, err := json.Marshal(keyValue)
 		if err != nil {
 			log.Println("JSON Marshal error:", err)
 		}
-		if _, err := f.Write(write); err != nil {
-			log.Fatal(err)
-		}
+		// if _, err := f.Write(write); err != nil {
+		// 	log.Fatal(err)
+		// }
+		f.Close()
 
 	}
 
