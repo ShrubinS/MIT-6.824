@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"mapreduce"
 	"os"
+	"strings"
+
+	"github.com/shrubins/MIT-6.824/6.824/mapreduce"
 )
 
 //
@@ -15,6 +18,12 @@ import (
 //
 func mapF(filename string, contents string) []mapreduce.KeyValue {
 	// TODO: you have to write this function
+	words := strings.Fields(contents)
+	var keyValues []string
+	for _, word := range words {
+		keyValues = append(keyValues, mapreduce.KeyValue{word, "1"})
+	}
+	return keyValues
 }
 
 //
@@ -24,6 +33,7 @@ func mapF(filename string, contents string) []mapreduce.KeyValue {
 //
 func reduceF(key string, values []string) string {
 	// TODO: you also have to write this function
+	return string(len(values))
 }
 
 // Can be run in 3 ways:
