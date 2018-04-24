@@ -5,8 +5,6 @@ import (
 	"mapreduce"
 	"os"
 	"strings"
-
-	"github.com/shrubins/MIT-6.824/6.824/mapreduce"
 )
 
 //
@@ -19,7 +17,7 @@ import (
 func mapF(filename string, contents string) []mapreduce.KeyValue {
 	// TODO: you have to write this function
 	words := strings.Fields(contents)
-	var keyValues []string
+	var keyValues []mapreduce.KeyValue
 	for _, word := range words {
 		keyValues = append(keyValues, mapreduce.KeyValue{word, "1"})
 	}
