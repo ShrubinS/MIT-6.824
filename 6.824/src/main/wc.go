@@ -48,15 +48,7 @@ func mapF(filename string, contents string) []mapreduce.KeyValue {
 //
 func reduceF(key string, values []string) string {
 	// TODO: you also have to write this function
-	var reducedSum int
-	for _, value := range values {
-		v, err := strconv.Atoi(value)
-		if err != nil {
-			fmt.Println(err, "on value", v, "for key", key)
-		}
-		reducedSum += v
-	}
-	return strconv.Itoa(reducedSum)
+	return strconv.Itoa(len(values))
 }
 
 // Can be run in 3 ways:
